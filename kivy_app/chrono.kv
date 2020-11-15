@@ -1,0 +1,19 @@
+<Grid>:
+    fps_label: fps_label
+    fps_hist: fps_hist
+    GridLayout:
+        size: root.width, root.height
+        rows: 2
+        cols: 1
+        Label:
+            text: "FPS"
+            id: fps_label
+            font_size: self.parent.height / 5
+            color: 156/255, 47 /255, 102/255, 1
+
+        TextInput:
+            text: ""
+            id: fps_hist
+            foreground_color: 1,1,1,1
+            background_color: 0,0,0,0
+
