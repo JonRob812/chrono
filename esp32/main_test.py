@@ -1,6 +1,5 @@
 from machine import ADC, Pin, freq, Timer
-from time import sleep, ticks_ms, ticks_diff
-from mqtt_simple import MQTTClient
+from time import sleep, ticks_ms, ticks_us, ticks_diff
 import gc
 gc.collect()
 
@@ -20,73 +19,45 @@ eye_1_last = None
 eye_2_last = None
 
 
-def timer_callback(t):
-    global eye_1_last, eye_2_last
-    x = detect(eye_1, detect_lim)
-    y = detect(eye_2, detect_lim)
-    if x:
-        eye_1_last = x
-    if y:
-        eye_2_last = y
-        diff = ticks_diff(eye_2_last, eye_1_last)
-        f = fps(diff)
-        print(f)
-
-
-sense_timer = Timer(0)
-sense_timer.init(period=1, mode=Timer.PERIODIC, callback=timer_callback)
-
-
-def fps(ms, d=dist):
-    seconds = ms / 1000
+def fps(us, d=dist):
+    seconds = us / 1000000
     d_feet = d / 12
     print('seconds', seconds, 'feet', d_feet)
     return (1 / seconds) * d_feet
 
 
-def detect_sum(eye):
-    thresh = 3
-    reads = []
-    while True:
-        x = eye.read()
-        reads.append(x)
-        if len(reads) > thresh:
-            reads.pop(0)
-        if sum(reads) < 1:
-            return ticks_ms()
-
-
 def detect_simple(eye, low_thresh):
     while eye.read() > low_thresh:
         pass
-    return ticks_ms()
+    return ticks_us()
 
 
 def detect(eye, low_thresh):
     if eye.read() < low_thresh:
-        return ticks_ms()
+        return ticks_us()
     else:
         return False
 
 
-def detect_loop(low_thresh, ms_period):
+def detect_loop(low_thresh, us_period):
+
     while True:
         eye_1_detect = detect(eye_1, low_thresh)
         if eye_1_detect:
-            while ticks_diff(ticks_ms(), eye_1_detect) < ms_period:
+            while ticks_diff(ticks_us(), eye_1_detect) < us_period:
                 eye_2_detect = detect(eye_2, low_thresh)
                 if eye_2_detect:
+                    print(ticks_diff(eye_2_detect, eye_1_detect))
                     f = fps(ticks_diff(eye_2_detect, eye_1_detect))
                     print('fps', f)
+                    sleep(1)
 
 
-def detect_loop_simple():
-    while True:
-        eye_1_break = detect_sum(eye_1)
-        eye_2_break = detect_sum(eye_2)
-        time_ms = ticks_diff(eye_2_break, eye_1_break)
+def do():
+    x = ticks_us()
+    sleep(.03)
+    print(ticks_diff(ticks_us(), x))
 
-        print(fps(time_ms))
 
 
 
