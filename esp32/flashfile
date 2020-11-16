@@ -1,4 +1,4 @@
-connect serial /dev/USB0
+connect serial /dev/ttyUSB0
 cp home_wifi.py /pyboard
 cp main.py /pyboard
 cp mqtt_simple.py /pyboard

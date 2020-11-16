@@ -17,14 +17,17 @@ eye_2.atten(ADC.ATTN_0DB)
 
 client = MQTTClient('Chr0n0', server)
 connected = False
+sleep(25)
 try:
     client.connect()
     connected = True
+    print('connected')
 except:
+    print('no connect')
     pass
 
 
-def fps(us, d=dist):
+def fps(us, d=eye_dist):
     seconds = us / 1000000
     d_feet = d / 12
     print('seconds', seconds, 'feet', d_feet)
@@ -58,10 +61,10 @@ def detect_loop(low_thresh, us_period):
 
 def measure_loop_forever():
     while True:
-        feet_per_second = detect_loop(200, 500000)
+        feet_per_second = detect_loop(50, 50000)
         print(feet_per_second)
         if connected:
-            client.publish(b'chrono', str(feet_per_second).encode())
+            client.publish(b'chrono', str(round(feet_per_second,2)).encode())
         sleep(1)
 
 
