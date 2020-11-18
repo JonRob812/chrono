@@ -59,7 +59,8 @@ def do():
     print(ticks_diff(ticks_us(), x))
 
 
-
+while True:
+    print(eye_1.read(), ' | ', eye_2.read())
 
 
 

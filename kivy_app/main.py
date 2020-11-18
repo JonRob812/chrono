@@ -61,7 +61,7 @@ class ChronoApp(App):
     client = mqtt.Client('chronoapp' + str(time.time_ns()))
 
     def fps_cb(self, client, usr_data, msg):
-        fps = msg.payload.decode()
+        fps = str(round(float(msg.payload.decode()),2))
         self.root.update_fps(fps)
 
     def build(self):
